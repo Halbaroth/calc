@@ -18,7 +18,10 @@
 (*                                                                           *)
 (*****************************************************************************)
 
-type op = Add | Sub | Mul | Div | Pow
+open Ppx_sexp_conv_lib
+open Conv
+
+type op = Add | Sub | Mul | Div | Pow [@@deriving compare, sexp_of]
 
 let pp_op fmt = function
   | Add -> Format.fprintf fmt "+"
@@ -27,10 +30,13 @@ let pp_op fmt = function
   | Div -> Format.fprintf fmt "/"
   | Pow -> Format.fprintf fmt "^"
 
+let compare_int = Int.compare
+
 type t =
   | Ans
   | Cst of int
   | Op of t * op * t
+  [@@deriving compare, sexp_of]
 
 exception No_ans
 

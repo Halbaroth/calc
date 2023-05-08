@@ -21,24 +21,38 @@
 open Base
 open Calc
 
-let eval str =
+let emit str =
   Lexer.scan str
   |> Parser.PredictiveParser.emit
-  |> Ast.eval
 
-let equal str1 str2 = Int.equal (eval str1) (eval str2)
-let diff str1 str2 = Int.compare (eval str1) (eval str2) <> 0
+let eval str = emit str |> Ast.eval
 
-let%test "ass add" = equal "1+2+3" "1+(2+3)"
-let%test "ass sub" = diff "1-2-3" "1-(2-3)"
-let%test "ass div 1" = equal "2/3/3" "0"
-let%test "ass div 2" = diff "2/3/3" "2"
-let%test "ass pow 1" = equal "2^3^2" "512"
-let%test "ass pow 2" = diff "2^3^2" "64"
-let%test "ass pow 3" = equal "(2^3)^2" "64"
-let%test "pred mul 1" = equal "1+2*3" "7"
-let%test "pred mul 2" = diff "1+2*3" "9"
-let%test "pred mul 3" = equal "(1+2)*3" "9"
-let%test "pred div 1" = equal "2+2/3" "2"
-let%test "pred div 2" = diff "2+2/3" "1"
-let%test "pred div 3" = equal "(2+2)/3" "1"
+let%test_unit "assoc add" =
+  [%test_eq: Ast.t] (emit "1+2+3") Ast.(Op (Op (Cst 1, Add, Cst 2), Add, Cst 3))
+
+let%test_unit "assoc mult" =
+  [%test_eq: Ast.t] (emit "1*2*3") Ast.(Op (Op (Cst 1, Mul, Cst 2), Mul, Cst 3))
+
+let%test_unit "assoc div 1" =
+  [%test_eq: int] (eval "2/3/3") (eval "0")
+
+let%test_unit "assoc div 2" =
+  [%test_eq: int] (eval "2/(3/3)") (eval "2")
+
+let%test_unit "assoc pow 1" =
+  [%test_eq: int] (eval "2^3^2") (eval "512")
+
+let%test_unit "assoc pow 2" =
+  [%test_eq: int] (eval "(2^3)^2") (eval "64")
+
+let%test_unit "pred mul 1" =
+  [%test_eq: int] (eval "1+2*3") (eval "7")
+
+let%test_unit "pred mul 3" =
+  [%test_eq: int] (eval "(1+2)*3") (eval "9")
+
+let%test_unit "pred div 1" =
+  [%test_eq: int] (eval "2+2/3") (eval "2")
+
+let%test_unit "pred div 3" =
+  [%test_eq: int] (eval "(2+2)/3") (eval "1")

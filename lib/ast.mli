@@ -18,12 +18,13 @@
 (*                                                                           *)
 (*****************************************************************************)
 
-type op = Add | Sub | Mul | Div | Pow
+type op = Add | Sub | Mul | Div | Pow [@@deriving compare, sexp_of]
 
 type t =
   | Ans
   | Cst of int
   | Op of t * op * t
+  [@@deriving compare, sexp_of]
 
 exception No_ans
 

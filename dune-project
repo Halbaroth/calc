@@ -22,6 +22,9 @@
  (depends
    ocaml
    dune
-   (ppx_inline_test :with-test))
+   ppx_sexp_conv
+   ppx_compare
+   (ppx_inline_test :with-test)
+   (ppx_assert :with-test))
  (tags
   (topics "to describe" your project)))

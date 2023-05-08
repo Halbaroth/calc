@@ -1,2 +1,4 @@
 (library
- (name calc))
+ (name calc)
+ (preprocess
+  (pps ppx_compare ppx_sexp_conv)))
