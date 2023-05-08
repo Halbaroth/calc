@@ -44,7 +44,9 @@ let () =
               Printer.print_err ~pos ~input "Unexpected token"
           | Parser.ParsingError (pos, str) ->
               Printer.print_err ?pos ~input (Format.sprintf "%s" str)
+          | Division_by_zero ->
+              Printer.print_err "Division by zero"
           | Ast.No_ans ->
-              Printer.print_err ~input "No answer"
+              Printer.print_err "No answer"
     done
   with Exit -> ()

@@ -74,6 +74,10 @@ let color_char ?pos fmt str =
       end
   | None -> fprintf fmt "%s" str
 
-let print_err ?pos ~input =
-  eprintf "%a@\n@{<fg_red>Error@}: @[<hov 0>%s@]@."
-    (color_char ?pos) input
+let print_err ?pos ?input =
+  match input with
+  | Some input ->
+    eprintf "%a@\n@{<fg_red>Error@}: @[<hov 0>%s@]@."
+      (color_char ?pos) input
+  | None ->
+    eprintf "@{<fg_red>Error@}: @[<hov 0>%s@]@."
