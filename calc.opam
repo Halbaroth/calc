@@ -12,7 +12,7 @@ bug-reports: "https://github.com/Halbaroth/calc/issues"
 depends: [
   "ocaml"
   "dune" {>= "3.7"}
-  "ppx_inline_test"
+  "ppx_inline_test" {with-test}
   "odoc" {with-doc}
 ]
 build: [

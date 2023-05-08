@@ -22,6 +22,6 @@
  (depends
    ocaml
    dune
-   ppx_inline_test)
+   (ppx_inline_test :with-test))
  (tags
   (topics "to describe" your project)))
