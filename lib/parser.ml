@@ -29,7 +29,8 @@ end
     R      -> '+' term R | '-' term R | e
     term   -> factor S
     S      -> '*' factor S | '/' factor S | e
-    factor -> cst | '(' expr ')' | 'ans'
+    factor -> pow ^ factor | pow
+    pow    -> cst | '(' expr ')' | 'ans'
   where e stands for the empty string. *)
 module PredictiveParser = struct
   open Ast
@@ -65,7 +66,15 @@ module PredictiveParser = struct
       emit_s (Op (acc, Div, factor)) tokens
     | tokens -> acc, tokens
 
-  and emit_factor = function
+  and emit_factor tokens =
+    let pow, tl = emit_pow tokens in
+    match tl with
+    | { Lexer.data = Lexer.EDGE; _ } :: tokens ->
+        let factor, tokens = emit_factor tokens in
+        Op (pow, Pow, factor), tokens
+    | _ -> pow, tl
+
+  and emit_pow = function
     | { data = Lexer.CST i; _ } :: tokens -> (Cst i), tokens
     | { data = LPAR; _ } :: tokens ->
         let expr, tokens = emit_expr tokens in

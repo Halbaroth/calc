@@ -18,3 +18,27 @@
 (*                                                                           *)
 (*****************************************************************************)
 
+open Base
+open Calc
+
+let eval str =
+  Lexer.scan str
+  |> Parser.PredictiveParser.emit
+  |> Ast.eval
+
+let equal str1 str2 = Int.equal (eval str1) (eval str2)
+let diff str1 str2 = Int.compare (eval str1) (eval str2) <> 0
+
+let%test "ass add" = equal "1+2+3" "1+(2+3)"
+let%test "ass sub" = diff "1-2-3" "1-(2-3)"
+let%test "ass div 1" = equal "2/3/3" "0"
+let%test "ass div 2" = diff "2/3/3" "2"
+let%test "ass pow 1" = equal "2^3^2" "512"
+let%test "ass pow 2" = diff "2^3^2" "64"
+let%test "ass pow 3" = equal "(2^3)^2" "64"
+let%test "pred mul 1" = equal "1+2*3" "7"
+let%test "pred mul 2" = diff "1+2*3" "9"
+let%test "pred mul 3" = equal "(1+2)*3" "9"
+let%test "pred div 1" = equal "2+2/3" "2"
+let%test "pred div 2" = diff "2+2/3" "1"
+let%test "pred div 3" = equal "(2+2)/3" "1"

@@ -24,7 +24,7 @@ let () =
   Printer.init ();
   let stdin = Unix.in_channel_of_descr Unix.stdin in
   try
-    let ans = ref 0 in
+    let ans = ref None in
     while true do
       Format.printf "@{<fg_blue>❱@} @?";
       match In_channel.input_line stdin with
@@ -35,14 +35,16 @@ let () =
             let tokens = Lexer.scan input in
             let res =
               Parser.PredictiveParser.emit tokens
-              |> Ast.eval ~ans:!ans
+              |> Ast.eval ?ans:!ans
             in
-            ans := res;
+            ans := Some res;
             Format.printf "ans = %i@." res
           with
           | Lexer.SyntaxError pos ->
               Printer.print_err ~pos ~input "Unexpected token"
           | Parser.ParsingError (pos, str) ->
               Printer.print_err ?pos ~input (Format.sprintf "%s" str)
+          | Ast.No_ans ->
+              Printer.print_err ~input "No answer"
     done
   with Exit -> ()

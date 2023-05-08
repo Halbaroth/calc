@@ -18,12 +18,14 @@
 (*                                                                           *)
 (*****************************************************************************)
 
-type op = Add | Sub | Mul | Div
+type op = Add | Sub | Mul | Div | Pow
 
 type t =
   | Ans
   | Cst of int
   | Op of t * op * t
 
-val eval : ans:int -> t -> int
+exception No_ans
+
+val eval : ?ans:int -> t -> int
 val pp : Format.formatter -> t -> unit

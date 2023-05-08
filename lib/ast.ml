@@ -18,26 +18,41 @@
 (*                                                                           *)
 (*****************************************************************************)
 
-type op = Add | Sub | Mul | Div
+type op = Add | Sub | Mul | Div | Pow
 
 let pp_op fmt = function
   | Add -> Format.fprintf fmt "+"
   | Sub -> Format.fprintf fmt "-"
   | Mul -> Format.fprintf fmt "*"
   | Div -> Format.fprintf fmt "/"
+  | Pow -> Format.fprintf fmt "^"
 
 type t =
   | Ans
   | Cst of int
   | Op of t * op * t
 
-let rec eval ~ans = function
-  | Ans -> ans
+exception No_ans
+
+let rec pow a = function
+  | 0 -> 1
+  | b ->
+      let x = pow a (b/2) in
+      if b mod 2 = 0 then x*x
+      else x*x*a
+
+let rec eval ?ans = function
+  | Ans ->
+      begin match ans with
+      | Some i -> i
+      | None -> raise No_ans
+      end
   | Cst i -> i
-  | Op (left, Add, right) -> eval ~ans left + eval ~ans right
-  | Op (left, Sub, right) -> eval ~ans left - eval ~ans right
-  | Op (left, Mul, right) -> eval ~ans left * eval ~ans right
-  | Op (left, Div, right) -> eval ~ans left / eval ~ans right
+  | Op (left, Add, right) -> eval ?ans left + eval ?ans right
+  | Op (left, Sub, right) -> eval ?ans left - eval ?ans right
+  | Op (left, Mul, right) -> eval ?ans left * eval ?ans right
+  | Op (left, Div, right) -> eval ?ans left / eval ?ans right
+  | Op (left, Pow, right) -> pow (eval ?ans left) (eval ?ans right)
 
 let rec pp fmt = function
   | Ans -> Format.fprintf fmt "ans"

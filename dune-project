@@ -5,11 +5,11 @@
 (generate_opam_files true)
 
 (source
- (github username/reponame))
+ (github Halbaroth/calc))
 
-(authors "Author Name")
+(authors "Pierre Villemot")
 
-(maintainers "Maintainer Name")
+(maintainers "Pierre Villemot")
 
 (license LICENSE)
 
@@ -17,10 +17,11 @@
 
 (package
  (name calc)
- (synopsis "A short synopsis")
- (description "A longer description")
- (depends ocaml dune)
+ (synopsis "A naive calculator in OCaml")
+ (description "A naive calculator in OCaml")
+ (depends
+   ocaml
+   dune
+   ppx_inline_test)
  (tags
   (topics "to describe" your project)))
-
-; See the complete stanza docs at https://dune.readthedocs.io/en/stable/dune-files.html#dune-project

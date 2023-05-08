@@ -1,2 +1,5 @@
-(test
- (name calc))
+(library
+ (name test)
+ (libraries base calc)
+ (inline_tests)
+ (preprocess (pps ppx_inline_test)))

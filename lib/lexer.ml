@@ -26,6 +26,7 @@ type token =
   | PLUS
   | MINUS
   | TIMES
+  | EDGE
   | SLASH
   | LPAR
   | RPAR
@@ -38,6 +39,7 @@ let pp_token fmt = function
 | PLUS -> Format.fprintf fmt "PLUS"
 | MINUS -> Format.fprintf fmt "MINUS"
 | TIMES -> Format.fprintf fmt "TIMES"
+| EDGE -> Format.fprintf fmt "EDGE"
 | SLASH -> Format.fprintf fmt "SLASH"
 | LPAR -> Format.fprintf fmt "LPAR"
 | RPAR -> Format.fprintf fmt "RPAR"
@@ -51,12 +53,13 @@ let is_int c =
   48 <= code && code <= 57
 
 let is_simple_lexeme c =
-  c = '+' || c = '-' || c = '*' || c = '/' || c = '(' || c = ')'
+  c = '+' || c = '-' || c = '*' || c = '/' || c = '^' || c = '(' || c = ')'
 
 let simple_tokens = [
   ('+', PLUS);
   ('-', MINUS);
   ('*', TIMES);
+  ('^', EDGE);
   ('/', SLASH);
   ('(', LPAR);
   (')', RPAR)

@@ -26,6 +26,7 @@ type token =
   | PLUS
   | MINUS
   | TIMES
+  | EDGE
   | SLASH
   | LPAR
   | RPAR
