@@ -21,6 +21,7 @@
 type 'a loc = { data : 'a; pos : int }
 
 type token =
+  | ANS
   | CST of int
   | PLUS
   | MINUS

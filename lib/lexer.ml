@@ -21,6 +21,7 @@
 type 'a loc = { data : 'a; pos : int }
 
 type token =
+  | ANS
   | CST of int
   | PLUS
   | MINUS
@@ -32,6 +33,7 @@ type token =
 exception SyntaxError of int
 
 let pp_token fmt = function
+| ANS -> Format.fprintf fmt "ANS"
 | CST i -> Format.fprintf fmt "(CST %i)" i
 | PLUS -> Format.fprintf fmt "PLUS"
 | MINUS -> Format.fprintf fmt "MINUS"
@@ -75,6 +77,12 @@ let scan str =
         in
         { data = CST res; pos }, seq)
   in
+  let scan_ans pos seq =
+    match Seq. take 2 seq |> List.of_seq with
+    | [(_, 'n'); (_, 's')] ->
+        { data = ANS; pos }, Seq.drop 2 seq
+    | _ -> raise (SyntaxError pos)
+  in
   let rec scan acc seq =
     match Seq.uncons seq with
     | Some (lc, tl) ->
@@ -85,6 +93,9 @@ let scan str =
             scan ({ data = token; pos} :: acc) tl
         | pos, c when is_int c ->
             let token, tl = scan_int pos [c] tl in
+            scan (token :: acc) tl
+        | pos, 'a' ->
+            let token, tl = scan_ans pos tl in
             scan (token :: acc) tl
         | pos, _ -> raise (SyntaxError pos)
         end

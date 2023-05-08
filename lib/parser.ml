@@ -29,7 +29,7 @@ end
     R      -> '+' term R | '-' term R | e
     term   -> factor S
     S      -> '*' factor S | '/' factor S | e
-    factor -> cst | '(' expr ')'
+    factor -> cst | '(' expr ')' | 'ans'
   where e stands for the empty string. *)
 module PredictiveParser = struct
   open Ast
@@ -66,10 +66,11 @@ module PredictiveParser = struct
     | tokens -> acc, tokens
 
   and emit_factor = function
-    | { data = Lexer.CST i; _ } :: tokens -> (Cst i), tokens;
+    | { data = Lexer.CST i; _ } :: tokens -> (Cst i), tokens
     | { data = LPAR; _ } :: tokens ->
         let expr, tokens = emit_expr tokens in
         expr, expect_token RPAR tokens
+    | { data = ANS; _ } :: tokens -> Ans, tokens
     | { pos; _ } :: _ ->
         raise_error ~pos "Constant or left parenthesis expected"
     | [] ->

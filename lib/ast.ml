@@ -27,17 +27,20 @@ let pp_op fmt = function
   | Div -> Format.fprintf fmt "/"
 
 type t =
+  | Ans
   | Cst of int
   | Op of t * op * t
 
-let rec eval = function
+let rec eval ~ans = function
+  | Ans -> ans
   | Cst i -> i
-  | Op (left, Add, right) -> eval left + eval right
-  | Op (left, Sub, right) -> eval left - eval right
-  | Op (left, Mul, right) -> eval left * eval right
-  | Op (left, Div, right) -> eval left / eval right
+  | Op (left, Add, right) -> eval ~ans left + eval ~ans right
+  | Op (left, Sub, right) -> eval ~ans left - eval ~ans right
+  | Op (left, Mul, right) -> eval ~ans left * eval ~ans right
+  | Op (left, Div, right) -> eval ~ans left / eval ~ans right
 
 let rec pp fmt = function
+  | Ans -> Format.fprintf fmt "ans"
   | Cst i -> Format.fprintf fmt "%i" i
   | Op (Cst i, op, Cst j) ->
       Format.fprintf fmt "%i %a %i" i pp_op op j
